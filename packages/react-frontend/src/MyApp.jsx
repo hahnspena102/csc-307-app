@@ -12,13 +12,22 @@ function MyApp() {
         setCharacters(updated);
     }
 
+    function updateList(person) {
+        setCharacters([...characters, person]);
+    }
+
+    function submitForm() {
+        props.handleSubmit(person);
+        setPerson({ name: "", job: "" });
+    }
+
     return (
         <div className="container">
             <Table 
                 characterData={characters} 
                 removeCharacter={removeOneCharacter}
             />
-            <Form />
+            <Form handleSubmit={updateList} />
         </div>
         
     );

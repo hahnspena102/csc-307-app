@@ -1,15 +1,15 @@
 {
   "name": "csc-307-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Hey! This is a README.",
   "main": "index.js",
   "scripts": {
+    "dev": "npm --prefix packages/react-frontend run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "workspaces": [
-      "packages/*"
+    "packages/*"
   ]
-
 }
