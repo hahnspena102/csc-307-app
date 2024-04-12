@@ -4,7 +4,7 @@
   "description": "Hey! This is a README.",
   "main": "index.js",
   "scripts": {
-    "dev": "npm --prefix packages/react-frontend run dev",
+    "dev": "npm --prefix packages/express-backend run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
