@@ -93,26 +93,32 @@ const addUser = (user) => {
     return user;
 };
 
-app.post("/users", (req, res) => {
-    const userToAdd = req.body;
-    addUser(userToAdd);
-        res.send();
-});
-
-// Delete User
-const deleteUser = (id) => {
-    console.log(id);
-    users["users_list"] = users["users_list"].filter(u => u["id"] !== id["id"]);
-    return id;
+const generateId = () => {
+  return Math.floor(Math.random() * 10000000).toString();
 };
 
-app.delete("/users", (req, res) => {
-    const userToDelete = req.body;
-    deleteUser(userToDelete);
-        res.send();
+app.post("/users", (req, res) => {
+    const userToAdd = {id: generateId() , ...req.body}
+    addUser(userToAdd);
+    res.status(201).json(userToAdd);
 });
 
-// 
+
+// Delete User
+app.delete("/users/:id", (req, res) => {
+  const id = req.params.id;
+  const deletedUser = deleteUser(id);
+  if (deletedUser) {
+      res.status(200).json({ message: "User deleted successfully" });
+  } else {
+      res.status(404).json({ message: "User not found" });
+  }
+});
+
+const deleteUser = (id) => {
+    users["users_list"] = users["users_list"].filter(u => u["id"] !== id);
+    return id;
+};
 
 // Listening
 app.listen(port, () => {
