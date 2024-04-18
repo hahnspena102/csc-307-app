@@ -5,6 +5,7 @@ import Form from "./Form";
 function MyApp() {
     const [characters, setCharacters] = useState([]);
     
+    // POST User
     function postUser(person) {
         const promise = fetch("Http://localhost:8000/users", {
             method: "POST",
@@ -32,30 +33,13 @@ function MyApp() {
         })
     }
 
-    /*
-    function submitForm() {
-        props.handleSubmit(person);
-        setPerson({ name: "", job: "" });
-    }
-   
-
-    function removeOneCharacter(index) {
-        const updated = characters.filter((character, i) => {
-          return i !== index;
-        });
-        setCharacters(updated);
-    }
-     */
-
+    // DELETE User
     function deleteCharacter(id) {
-        // Send DELETE request to backend to delete user with specified id
-        console.log("DELETE");
         fetch(`http://localhost:8000/users/${id}`, {
             method: "DELETE"
         })
         .then((res) => {
-            if (res.status === 200) {
-                // If successful, remove character from state
+            if (res.status === 204) {
                 setCharacters(characters.filter(character => character.id !== id));
             } else {
                 throw new Error('Failed to delete user');
@@ -66,6 +50,7 @@ function MyApp() {
         });
     }
 
+    // FETCH Users
     function fetchUsers() {
         const promise = fetch("http://localhost:8000/users");
         return promise;
@@ -90,7 +75,5 @@ function MyApp() {
         
     );
 }
-
-
 
 export default MyApp;
