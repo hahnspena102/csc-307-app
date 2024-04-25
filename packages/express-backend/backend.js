@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import userServices from "./models/user-services.js";
 
 const app = express();
 const port = 8000;
@@ -34,91 +35,65 @@ const users = {
     ]
 };
 
+
+
 app.use(cors());
 app.use(express.json());
 
+// GET
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
 app.get("/users", (req, res) => {
-    const name = req.query.name;
-    const job = req.query.job;
-    if (name != undefined && job != undefined) {
-        let result = findUserByNameJob(name, job);
-        result = { users_list: result };
-        res.send(result);
-    } else if (name != undefined) {
-        let result = findUserByName(name);
-        result = { users_list: result };
-        res.send(result);
-    } else {
-        res.send(users);
-    }
-});
+  const name = req.query.name;
+  const job = req.query.job;
 
-// FIND BY 
-// By Name
-const findUserByName = (name) => {
-    return users["users_list"].filter(
-      (user) => user["name"] === name
-    );
-};
-  
-// By ID
-const findUserById = (id) =>
-    users["users_list"].find((user) => user["id"] === id);
+  let promise = userServices.getUsers(name, job);
 
-app.get("/users/:id", (req, res) => {
-  const id = req.params["id"]; //or req.params.id
-  let result = findUserById(id);
-  if (result === undefined) {
-    res.status(404).send("Resource not found.");
-  } else {
-    res.send(result);
-  }
-});
+  promise
+      .then(result => {
+          res.send({ users_list: result });
+      })
+      .catch(error => {
+          res.status(400).send("Failed to fetch users.");
+      });
+})
 
-// By Name and Job
-const findUserByNameJob = (name, job) => {
-    return users["users_list"].filter(
-        (user) => user["name"] === name && user["job"] === job
-    );
-};
 
-// ADD AND DELETE
-// Add User
-const addUser = (user) => {
-    users["users_list"].push(user);
-    return user;
-};
-
-const generateId = () => {
-  return Math.floor(Math.random() * 10000000).toString();
-};
-
+// POST AND DELETE
 app.post("/users", (req, res) => {
-    const userToAdd = {id: generateId() , ...req.body}
-    addUser(userToAdd);
-    res.status(201).json(userToAdd);
+  const userToAdd = req.body;
+
+  let promise = userServices.addUser(userToAdd);
+
+  promise
+      .then(result => {
+          res.status(201).json(result);
+      })
+      .catch(error => {
+          res.status(404).send("Failed to add user.");
+      });
+
 });
 
 
 // Delete User
 app.delete("/users/:id", (req, res) => {
   const id = req.params.id;
-  const deletedUser = deleteUser(id);
-  if (deletedUser) {
-      res.status(204).send("User deleted successfully.");
-  } else {
-      res.status(404).json("User not found.");
-  }
+
+  let promise = userServices.deleteUser(id);
+
+  promise
+      .then(result => {
+          res.status(204).json(result);
+      })
+      .catch(error => {
+          res.status(404).send("User not found.");
+      });
 });
 
-const deleteUser = (id) => {
-    users["users_list"] = users["users_list"].filter(u => u["id"] !== id);
-    return id;
-};
+
 
 // Listening
 app.listen(port, () => {
