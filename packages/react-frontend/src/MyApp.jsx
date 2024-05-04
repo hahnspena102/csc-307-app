@@ -27,7 +27,10 @@ function MyApp() {
                 throw new Error('Failed to fetch users');
             }   
         })
-        .then((personWithID) => setCharacters([...characters, personWithID]))
+        .then((personWithID) => {
+            setCharacters([...characters, personWithID])
+            console.log(personWithID);
+        })
         .catch((error) => {
             console.log(error);
         })
@@ -40,7 +43,7 @@ function MyApp() {
         })
         .then((res) => {
             if (res.status === 204) {
-                setCharacters(characters.filter(character => character.id !== id));
+                setCharacters(characters.filter(character => character._id !== id));
             } else {
                 throw new Error('Failed to delete user');
             }
